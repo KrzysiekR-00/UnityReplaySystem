@@ -29,6 +29,19 @@ public class ReplaySystemController : MonoBehaviour
     public void InitializeAndStartPlaying()
     {
         _player.Initialize(new FileReplayDataLoader(_recordingDataFilePath));
+        _player.Play();
+    }
+
+    public void ShowRecordingFile()
+    {
+        if (!File.Exists(_recordingDataFilePath))
+        {
+            return;
+        }
+
+        string argument = "/select, \"" + _recordingDataFilePath + "\"";
+
+        System.Diagnostics.Process.Start("explorer.exe", argument);
     }
 
     private void Awake()
