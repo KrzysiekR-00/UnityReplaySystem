@@ -7,7 +7,7 @@ namespace ReplaySystem
     internal class ChangePosition : TransformCommand
     {
         [DataMember]
-        internal Vector3 PreviousPosition { get; private set; } = Vector3.zero;
+        internal Vector3? PreviousPosition { get; private set; } = null;
         [DataMember]
         internal Vector3 CurrentPosition { get; private set; } = Vector3.zero;
 
@@ -16,7 +16,7 @@ namespace ReplaySystem
             get { return PreviousPosition != CurrentPosition; }
         }
 
-        internal ChangePosition(string objectId, uint trackerId, uint transformId, Vector3 previousPosition, Vector3 currentPosition)
+        internal ChangePosition(string objectId, uint trackerId, uint transformId, Vector3? previousPosition, Vector3 currentPosition)
             : base(objectId, trackerId, transformId)
         {
             PreviousPosition = previousPosition;

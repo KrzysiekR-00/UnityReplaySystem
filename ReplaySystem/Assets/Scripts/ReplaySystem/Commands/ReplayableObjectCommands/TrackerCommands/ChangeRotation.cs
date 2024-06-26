@@ -7,7 +7,7 @@ namespace ReplaySystem
     internal class ChangeRotation : TransformCommand
     {
         [DataMember]
-        internal Quaternion PreviousRotation { get; private set; } = Quaternion.identity;
+        internal Quaternion? PreviousRotation { get; private set; } = null;
         [DataMember]
         internal Quaternion CurrentRotation { get; private set; } = Quaternion.identity;
 
@@ -16,7 +16,7 @@ namespace ReplaySystem
             get { return !PreviousRotation.Equals(CurrentRotation); }
         }
 
-        internal ChangeRotation(string objectId, uint trackerId, uint transformId, Quaternion previousRotation, Quaternion currentRotation)
+        internal ChangeRotation(string objectId, uint trackerId, uint transformId, Quaternion? previousRotation, Quaternion currentRotation)
             : base(objectId, trackerId, transformId)
         {
             PreviousRotation = previousRotation;

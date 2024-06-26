@@ -9,8 +9,8 @@ namespace ReplaySystem
         private readonly Transform _transform;
         private readonly bool _globalTrackingMode;
 
-        private Vector3 _previousPosition;
-        private Quaternion _previousRotation;
+        private Vector3? _previousPosition;
+        private Quaternion? _previousRotation;
 
         private readonly string _debugName;
         private readonly string _debugParentName;
@@ -22,8 +22,8 @@ namespace ReplaySystem
             _transform = transform;
             _globalTrackingMode = globalTrackingMode;
 
-            _previousPosition = GetPosition();
-            _previousRotation = GetRotation();
+            _previousPosition = null;
+            _previousRotation = null;
 
             _debugName = transform.name;
             if (transform.parent != null) _debugParentName = transform.parent.name;
@@ -59,12 +59,12 @@ namespace ReplaySystem
 
         internal void UndoCommand(ChangePosition changePosition)
         {
-            ChangePosition(changePosition.PreviousPosition);
+            if(changePosition.PreviousPosition.HasValue) ChangePosition(changePosition.PreviousPosition.Value);
         }
 
         internal void UndoCommand(ChangeRotation changeRotation)
         {
-            ChangeRotation(changeRotation.PreviousRotation);
+            if(changeRotation.PreviousRotation.HasValue) ChangeRotation(changeRotation.PreviousRotation.Value);
         }
 
         private Vector3 GetPosition()
