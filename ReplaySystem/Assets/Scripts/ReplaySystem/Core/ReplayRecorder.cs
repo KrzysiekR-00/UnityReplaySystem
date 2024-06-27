@@ -12,7 +12,7 @@ namespace ReplaySystem
         [SerializeField]
         private int _recordingFPS = 30;
 
-        private IReplayDataRecorder _recorder;
+        private IReplayDataWriter _recorder;
         private ReplayableObjectCollection _replayableObjectCollection;
 
         private bool _isRecording = false;
@@ -21,7 +21,7 @@ namespace ReplaySystem
 
         private readonly List<TimeSpan> _updateTimes = new();
 
-        public void Initialize(IReplayDataRecorder recorder)
+        public void Initialize(IReplayDataWriter recorder)
         {
             _replayableObjectCollection.ReplayableObjectRegistered = (r) => { AddCommand(r.GetSpawnObjectCommand()); r.PrepareForReplayRecording(); };
             _replayableObjectCollection.ReplayableObjectUnregistered = (r) => { AddCommand(r.GetDestroyObjectCommand()); };
@@ -31,7 +31,6 @@ namespace ReplaySystem
             }
 
             _recorder = recorder;
-            _recorder.Open();
 
             _currentRecordingTimeStamp = TimeSpan.Zero;
             _nextTimeStampToRecord = TimeSpan.Zero;
@@ -57,14 +56,12 @@ namespace ReplaySystem
             if (!_isRecording && !force) return;
 
             eventToSave.SetTimeStamp(_currentRecordingTimeStamp);
-            _recorder.RecordCommand(eventToSave);
+            _recorder.WriteCommand(eventToSave);
         }
 
         public void StopAndSaveRecording()
         {
             _isRecording = false;
-
-            _recorder?.Close();
         }
 
         private bool IsTimeStampProperToRecord(TimeSpan timeStamp)
@@ -105,7 +102,7 @@ namespace ReplaySystem
                 foreach (var command in replayableCommands)
                 {
                     command.SetTimeStamp(_currentRecordingTimeStamp);
-                    _recorder.RecordCommand(command);
+                    _recorder.WriteCommand(command);
                 }
             }
 

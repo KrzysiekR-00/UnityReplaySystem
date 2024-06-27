@@ -17,7 +17,7 @@ public class ReplaySystemController : MonoBehaviour
 
     public void InitializeAndStartRecording()
     {
-        _recorder.Initialize(new FileReplayDataRecorder(_recordingDataFilePath));
+        _recorder.Initialize(new ReplayFileDataWriter(_recordingDataFilePath));
         _recorder.Record();
     }
 
@@ -28,7 +28,7 @@ public class ReplaySystemController : MonoBehaviour
 
     public void InitializeAndStartPlaying()
     {
-        _player.Initialize(new FileReplayDataLoader(_recordingDataFilePath));
+        _player.Initialize(new ReplayFileDataReader(_recordingDataFilePath));
         _player.Play();
     }
 

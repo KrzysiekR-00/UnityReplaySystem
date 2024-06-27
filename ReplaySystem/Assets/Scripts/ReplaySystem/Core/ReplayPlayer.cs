@@ -19,7 +19,7 @@ namespace ReplaySystem
         internal ReplayableObjectCollection ReplayableObjectCollection { get; private set; }
         internal PrefabsCollection PrefabsCollection { get; private set; }
 
-        private IReplayDataLoader _loader;
+        private IReplayDataReader _loader;
 
         private bool _isInitialized = false;
         private TimeSpan _lastCommandTimeStamp = TimeSpan.Zero;
@@ -38,7 +38,7 @@ namespace ReplaySystem
         private readonly List<TimeSpan> _updateTimes = new();
         private readonly List<TimeSpan> _loadingTimes = new();
 
-        public void Initialize(IReplayDataLoader loader)
+        public void Initialize(IReplayDataReader loader)
         {
             ReplayableObjectCollection.ReplayableObjectRegistered = (replayable) => { replayable.PrepareForReplayPlaying(); };
             foreach (var replayableObject in ReplayableObjectCollection.GetReplayableObjects())
@@ -47,7 +47,6 @@ namespace ReplaySystem
             }
 
             _loader = loader;
-            _loader.Open();
 
             Pause();
 
@@ -97,7 +96,7 @@ namespace ReplaySystem
 
         public TimeSpan GetReplayLength()
         {
-            return _loader.GetExerciseEndTimeStamp();
+            return _loader.GetReplayLength();
         }
 
         public TimeSpan GetCurrentReplayTime()
@@ -145,7 +144,7 @@ namespace ReplaySystem
             }
             else _playForward = true;
 
-            var commandsToHandle = _loader.GetCommandsBetweenTimeStamps(from, to);
+            var commandsToHandle = _loader.ReadCommandsBetweenTimeStamps(from, to);
             _commandsToDo = _commandsToDo.Concat(commandsToHandle).ToArray();
 
 #if UNITY_EDITOR
