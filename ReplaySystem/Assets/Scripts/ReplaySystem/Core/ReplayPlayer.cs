@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
@@ -34,9 +33,6 @@ namespace ReplaySystem
 
         private DateTime? _loadingStart = null;
         private bool _isLoading = false;
-
-        private readonly List<TimeSpan> _updateTimes = new();
-        private readonly List<TimeSpan> _loadingTimes = new();
 
         public void Initialize(IReplayDataReader loader)
         {
@@ -147,11 +143,6 @@ namespace ReplaySystem
             var commandsToHandle = _loader.ReadCommandsBetweenTimeStamps(from, to);
             _commandsToDo = _commandsToDo.Concat(commandsToHandle).ToArray();
 
-#if UNITY_EDITOR
-            var loadingTime = DateTime.Now - _loadingStart.Value;
-            _loadingTimes.Add(loadingTime);
-#endif
-
             _isLoading = false;
             _loadingStart = null;
         }
@@ -164,8 +155,6 @@ namespace ReplaySystem
 
         private void Update()
         {
-            var updateStart = DateTime.Now;
-
             if (!_isInitialized) return;
 
             if (_isLoading)
@@ -190,12 +179,6 @@ namespace ReplaySystem
                 if (_replaySpeed > 0) _lastCommandTimeStamp = _targetReplayTimeStamp.Add(new TimeSpan(1));
                 else if (_replaySpeed < 0) _lastCommandTimeStamp = _targetReplayTimeStamp.Add(new TimeSpan(-1));
             }
-
-#if UNITY_EDITOR
-            if (!_isPlaying) return;
-            var updateTime = DateTime.Now - updateStart;
-            _updateTimes.Add(updateTime);
-#endif
         }
 
         private void ChangeTimeScale(float targetTimeScale)
@@ -228,16 +211,6 @@ namespace ReplaySystem
         private void OnDisable()
         {
             Time.timeScale = 1;
-
-#if UNITY_EDITOR
-            if (_updateTimes.Count <= 0) return;
-            Debug.Log("_updateTimes: " + _updateTimes.Count);
-            Debug.Log("Average player update time ms: " + _updateTimes.Average(t => t.Milliseconds));
-            Debug.Log("Max player update time ms: " + _updateTimes.Max(t => t.Milliseconds));
-            Debug.Log("_loadingTimes: " + _loadingTimes.Count);
-            Debug.Log("Average player loading time ms: " + _loadingTimes.Average(t => t.Milliseconds));
-            Debug.Log("Max player loading time ms: " + _loadingTimes.Max(t => t.Milliseconds));
-#endif
         }
     }
 }

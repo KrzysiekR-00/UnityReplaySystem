@@ -34,10 +34,7 @@ public class ReplaySystemController : MonoBehaviour
 
     public void ShowRecordingFile()
     {
-        if (!File.Exists(_recordingDataFilePath))
-        {
-            return;
-        }
+        if (!File.Exists(_recordingDataFilePath)) return;
 
         string argument = "/select, \"" + _recordingDataFilePath + "\"";
 

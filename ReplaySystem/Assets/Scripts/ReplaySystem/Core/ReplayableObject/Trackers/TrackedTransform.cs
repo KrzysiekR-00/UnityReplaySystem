@@ -59,12 +59,12 @@ namespace ReplaySystem
 
         internal void UndoCommand(ChangePosition changePosition)
         {
-            if(changePosition.PreviousPosition.HasValue) ChangePosition(changePosition.PreviousPosition.Value);
+            if (changePosition.PreviousPosition.HasValue) ChangePosition(changePosition.PreviousPosition.Value);
         }
 
         internal void UndoCommand(ChangeRotation changeRotation)
         {
-            if(changeRotation.PreviousRotation.HasValue) ChangeRotation(changeRotation.PreviousRotation.Value);
+            if (changeRotation.PreviousRotation.HasValue) ChangeRotation(changeRotation.PreviousRotation.Value);
         }
 
         private Vector3 GetPosition()

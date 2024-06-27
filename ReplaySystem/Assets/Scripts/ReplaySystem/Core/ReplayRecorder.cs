@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -18,8 +17,6 @@ namespace ReplaySystem
         private bool _isRecording = false;
         private TimeSpan _currentRecordingTimeStamp = TimeSpan.Zero;
         private TimeSpan _nextTimeStampToRecord = TimeSpan.Zero;
-
-        private readonly List<TimeSpan> _updateTimes = new();
 
         public void Initialize(IReplayDataWriter recorder)
         {
@@ -83,8 +80,6 @@ namespace ReplaySystem
 
         private void LateUpdate()
         {
-            var updateStart = DateTime.Now;
-
             if (!_isRecording) return;
 
             _currentRecordingTimeStamp = _currentRecordingTimeStamp.Add(TimeSpan.FromSeconds(Time.deltaTime));
@@ -105,23 +100,11 @@ namespace ReplaySystem
                     _recorder.WriteCommand(command);
                 }
             }
-
-#if UNITY_EDITOR
-            var updateTime = DateTime.Now - updateStart;
-            _updateTimes.Add(updateTime);
-#endif
         }
 
         private void OnDisable()
         {
             StopAndSaveRecording();
-
-#if UNITY_EDITOR
-            if (_updateTimes.Count <= 0) return;
-            Debug.Log("_updateTimes: " + _updateTimes.Count);
-            Debug.Log("Average recorder update time ms: " + _updateTimes.Average(t => t.Milliseconds));
-            Debug.Log("Max recorder update time ms: " + _updateTimes.Max(t => t.Milliseconds));
-#endif
         }
     }
 }
